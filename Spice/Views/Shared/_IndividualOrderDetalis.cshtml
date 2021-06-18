@@ -1,9 +1,10 @@
 ﻿@model Spice.Models.ViewModels.OrderDetalisViewModel
+@using Spice.Utility
 @*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
-<form method="post">
+<form method="post" asp-action="OrderComplete" asp-controller="Order" asp-route-id="@Model.OrderHeader.Id">
     <div class="container row border ml-1 backgroundWhite10Padding" style="width:100%">
         <div class="col-lg-8" style="border-right:1px solid #bbb9b9">
             <br />
@@ -66,7 +67,7 @@
             </h4>
             <ul class="list-group mb-3">
                 @{ var total = 0.0;
-                   
+
 
                 }
 
@@ -96,8 +97,15 @@
                 </li>
 
             </ul>
+            @if ((Model.OrderHeader.Status == SD.StatusReady )&& (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.FrontDeskUser)))
+            {
+                <button type="submit" class="btn btn-success form-control"><i class="far fa-thumbs-up"></i> Confirm Pickup</button>
+            }
+            else
+            {
+                <button type="button" disabled class="btn btn-info form-control">@Model.OrderHeader.Status</button>
+            }
         </div>
     </div>
 </form>
-
 

@@ -40,39 +40,45 @@
                         Total Item
                     </th>
                     <th>
-                        
+
                     </th>
 
 
                 </tr>
                 @foreach (var item in Model)
                 {
-            <tr>
-                <td>
-                    @Html.DisplayFor(m => item.OrderHeader.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.OrderHeader.PickupName)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.OrderHeader.ApplicationUser.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.OrderHeader.PickupTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.OrderHeader.OrderTotal)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.OrderDetails.Count)
-                </td>
-                <td>
-                    <button type="submit" class="btn btn-success anchorDetails" data-id="@item.OrderHeader.Id" data-toggle="model">
-                        <i class="far fa-list-alt"></i>
-                        Details
-                    </button>
-                </td>
-            </tr>
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderHeader.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderHeader.PickupName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderHeader.ApplicationUser.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderHeader.PickupTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderHeader.OrderTotal)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.OrderDetails.Count)
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-success anchorDetails" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                <i class="far fa-list-alt"></i>
+                                Details
+                            </button>
+                            @if (item.OrderHeader.Status == Spice.Utility.SD.StatusSubmitted || item.OrderHeader.Status == Spice.Utility.SD.StatusInProcess || item.OrderHeader.Status == Spice.Utility.SD.StatusCompleted || item.OrderHeader.Status == Spice.Utility.SD.StatusReady)
+                            {
+                                <button type="button" class="btn btn-info btnOrderStatus" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                    <i class="far fa-clock"></i> Status
+                                </button>
+                            }
+                        </td>
+                    </tr>
                 }
             </table>
         }
@@ -84,50 +90,86 @@
         }
     </div>
 </div>
-<div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog-centered modal-dialog" role="document">
-        <div class="modal-content">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog" style="max-width:700px" role="document">
+        <div class="modal-content" >
             <div class="modal-header bg-success text-light justify-content-center">
                 <h5 class="modal-title">
                     Order Details
                 </h5>
             </div>
-            <div class="modal-body justify-content-center" id="myModelContent">
+            <div class="modal-body justify-content-center" id="myModalContent">
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="model">Colse</button>
+                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal">Colse</button>
             </div>
         </div>
     </div>
 </div>
+<div class="modal fade" id="myOrderStatus" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:700px"  role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-light justify-content-center">
+                <h5 class="modal-title">Order Status </h5>
+            </div>
+            <div class="modal-body justify-content-center" id='myOrderStatusContent'>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
 
-@section scripts{ 
- <script>
-     debugger;
-     var PostBackURL = '/Customer/Order/GetOrderDetails';
-     $(function () {
-         $(".anchorDetails").click(function () {
-             var $buttonClicked = $(this);
-             var id = $buttonClicked.attr('data-id');
-             $.ajax({
-                 type: "Get",
-                 url: PostBackURL,
-                 contentType: "application/json; charset=utf-8",
-                 data: { "Id": id },
-                 cache: false,
-                 dataType: "json",
-                 success: function (data) {
-                     $('#myModelContent').html(data);
-                     $('#myModel').model('show');
+        var PostBackURL = '/Customer/Order/GetOrderDetails';
+        var OrderStatusURL = '/Customer/Order/GetOrderStatus';
+        $(function () {
+            $(".anchorDetails").click(function () {
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                $.ajax({
+                    type: "Get",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    dataType: "html",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
 
-                 },
-                 error: function () {
-                     alert("Dynamic content load failed");
-                 }
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed");
+                    }
 
-             })
-         })
-     })
- </script>
+                });
+            });
+            $(".btnOrderStatus").click(function () {
+                var $buttonClicked = $(this);
+                var id = $buttonClicked.attr('data-id');
+                $.ajax({
+                    type: "GET",
+                    url: OrderStatusURL,
+                    contentType: "text/html; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    dataType: "html",
+                    success: function (data) {
+                        $('#myOrderStatusContent').html(data);
+                        $('#myOrderStatus').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed.");
+                    }
+                });
+            });
+        });
+
+    </script>
+
+
 }

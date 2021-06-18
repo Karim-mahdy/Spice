@@ -68,11 +68,13 @@ namespace Spice.Areas.Identity.Pages.Account
 
 
             public string Name { get; set; }
+            
             public string PhoneNumber { get; set; }
             public string StreetAddress { get; set; }
             public string City { get; set; }
             public string State { get; set; }
             public string PostalCode { get; set; }
+            public string JopType { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -96,7 +98,8 @@ namespace Spice.Areas.Identity.Pages.Account
                     StreetAddress=Input.StreetAddress,
                     State=Input.State,
                     PostalCode=Input.PostalCode,
-                    PhoneNumber=Input.PhoneNumber
+                    PhoneNumber=Input.PhoneNumber,
+                    JopType= Input.JopType
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
@@ -119,22 +122,26 @@ namespace Spice.Areas.Identity.Pages.Account
                     }
                     if (role==SD.KitchenUser)
                     {
+                        user.JopType = SD.KitchenUser;
                         await _userManager.AddToRoleAsync(user, SD.KitchenUser);
                     }
                     else
                     {
                         if (role == SD.FrontDeskUser)
                         {
+                            user.JopType = SD.FrontDeskUser;
                             await _userManager.AddToRoleAsync(user, SD.FrontDeskUser);
                         }
                         else
                         {
                             if (role == SD.ManagerUser)
                             {
+                                user.JopType = SD.ManagerUser;
                                 await _userManager.AddToRoleAsync(user, SD.ManagerUser);
                             }
                             else
                             {
+                             
                                 await _userManager.AddToRoleAsync(user, SD.CustomerEndUser);
                                 await _signInManager.SignInAsync(user, isPersistent: false);
                                 return LocalRedirect(returnUrl);

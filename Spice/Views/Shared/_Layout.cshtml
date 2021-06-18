@@ -9,7 +9,7 @@
     <title>@ViewData["Title"] - Spice</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/jquery-ui.css" />
+    <link href="~/css/jquery-ui.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" />
 </head>
 <body class="search-background">
@@ -43,30 +43,6 @@
 
                         }
 
-                        @if (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.CustomerEndUser))
-                        {
-                            <li class="nav-item">
-                                <a asp-area="Customer" asp-controller="Order" asp-action="OrderHistory" class="nav-link">
-                                    OrderHistory
-                                </a>
-                            </li>
-                            <li style="color:white">
-                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
-                                    @{
-                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32("ssCartCount");
-                                    }
-                                    <i class="fas fa-shopping-cart"></i> &nbsp;(@count)
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li style="color:white">
-                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
-                                    <i class="fas fa-shopping-cart"></i> &nbsp;(0)
-                                </a>
-                            </li>
-                        }
                         @if (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.FrontDeskUser))
                         {
                             <li class="nav-item dropdown text-white-50">
@@ -88,6 +64,35 @@
 
                             </li>
                         }
+                        @if (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.CustomerEndUser))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="Customer" asp-controller="Order" asp-action="OrderHistory" class="nav-link">
+                                    OrderHistory
+                                </a>
+                            </li>
+
+                        }
+                        @if (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.CustomerEndUser))
+                        {
+                            
+                            <li style="color:white">
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32("ssCartCount");
+                                    }
+                                    <i class="fas fa-shopping-cart"></i> &nbsp;(@count)
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li style="color:white">
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-shopping-cart"></i> &nbsp;(0)
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -101,7 +106,7 @@
 
     <footer class="border-top footer text-white-50" style="background-color:#343a40">
         <div class="container">
-            &copy; 2020 - Spice
+            &copy; 2021 - Spice
         </div>
     </footer>
 

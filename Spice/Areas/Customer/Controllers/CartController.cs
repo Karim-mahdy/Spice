@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,8 @@ namespace Spice.Areas.Customer.Controllers
             EmailSender = emailSender;
             _db = db;
         }
+
+        [Authorize(Roles = SD.CustomerEndUser + "," + SD.ManagerUser + "," + SD.KitchenUser + "," + SD.FrontDeskUser)]
         public async Task< IActionResult> Index()
         {
 
@@ -42,7 +45,7 @@ namespace Spice.Areas.Customer.Controllers
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            var cart =  _db.ShoppingCart.Where(x => x.ApplicationUserId == claim.Value);
+            var cart = _db.ShoppingCart.Where(x => x.ApplicationUserId == claim.Value);
 
             if (cart!=null)
             {
@@ -51,6 +54,10 @@ namespace Spice.Areas.Customer.Controllers
             foreach (var list in detailsCart.ListCart)
             {
                 list.MenuItem = await _db.MenuItems.FirstOrDefaultAsync(m=>m.Id==list.MenuItemId);
+                if (list.MenuItem == null)
+                {
+                    continue;
+                }
                 detailsCart.OrderHeader.OrderTotal = detailsCart.OrderHeader.OrderTotal + (list.MenuItem.Price * list.Count);
                 
             }

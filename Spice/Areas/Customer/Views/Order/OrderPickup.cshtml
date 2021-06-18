@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<Spice.Models.ViewModels.OrderDetalisViewModel>
+@using Spice.Utility
 @{
     ViewData["Title"] = "OrderHistory";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<form method="post">
+<form method="get">
     <br />
     <br />
     <h2 class="text-info">Orders Ready For Pickp :</h2>
@@ -64,46 +65,49 @@
                         <th>
 
                         </th>
+                        <th>
+
+                        </th>
 
 
                     </tr>
                     @foreach (var item in Model)
                     {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderHeader.Id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderHeader.PickupName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderHeader.ApplicationUser.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderHeader.PickupTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderHeader.OrderTotal)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.OrderDetails.Count)
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-success anchorDetails" data-id="@item.OrderHeader.Id" data-toggle="model">
-                            <i class="far fa-list-alt"></i>
-                            Details
-                        </button>
-                    </td>
-                    <td>
-                     <td>
-                      <a  asp-action="Invoice" asp-controller="Order" class="btn btn-info" asp-route-id="@item.OrderHeader.Id">
-                                   
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderHeader.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderHeader.PickupName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderHeader.ApplicationUser.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderHeader.PickupTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderHeader.OrderTotal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.OrderDetails.Count)
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success anchorDetails" data-id="@item.OrderHeader.Id" data-toggle="modal">
+                                    <i class="far fa-list-alt"></i>
+                                    Details
+                                </button>
+                            </td>
+                            <td>
+                            <td>
+                                <a asp-action="Invoice" asp-controller="Order" class="btn btn-info" asp-route-id="@item.OrderHeader.Id">
+
                                     <i class="far fa-list-alt"></i>
                                     invoice
-                      </a>
-                            
-                    </td>
-                </tr>
+                                </a>
+
+                            </td>
+                        </tr>
                     }
                 </table>
             }
@@ -117,27 +121,31 @@
     </div>
 
 </form>
-<div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog-centered modal-dialog" role="document">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-centered modal-dialog" style="max-width:700px" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-success text-light justify-content-center">
-                <h5 class="modal-title">
-                    Order Details
-                </h5>
+            <div class="modal-header bg-success text-light ">
+                <div class="col-10 offset-1">
+                    <center><h5 class="modal-title">Order Details</h5></center>
+                </div>
+                <div class="col-1">
+                    <button type="button" class="float-right btn-outline-secondary close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body justify-content-center" id="myModelContent">
+            <div class="modal-body justify-content-center" id="myModalContent">
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style="width:20%" data-dismiss="model">Colse</button>
-            </div>
+
         </div>
     </div>
 </div>
 
+
 @section scripts{
     <script>
-        debugger;
+
         var PostBackURL = '/Customer/Order/GetOrderDetails';
         $(function () {
             $(".anchorDetails").click(function () {
@@ -149,18 +157,18 @@
                     contentType: "application/json; charset=utf-8",
                     data: { "Id": id },
                     cache: false,
-                    dataType: "json",
+                    dataType: "html",
                     success: function (data) {
-                        $('#myModelContent').html(data);
-                        $('#myModel').model('show');
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
 
                     },
                     error: function () {
                         alert("Dynamic content load failed");
                     }
 
-                })
-            })
-        })
+                });
+            });
+        });
     </script>
 }
